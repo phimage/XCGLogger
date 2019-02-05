@@ -12,8 +12,17 @@
 public protocol UserInfoConvertibleProtocol {
     
     /// Convert the object to a userInfo compatible dictionary
-    var dictionary: [String: Any] { get }
+    var userInfo: [String: Any] { get }
 
+}
+
+/// Make `Dictionary` conform to `UserInfoConvertibleProtocol`.
+
+extension Dictionary: UserInfoConvertibleProtocol where Key == String {
+
+    public var userInfo: [String: Any] {
+        return self
+    }
 }
 
 /// Protocol for creating tagging objects (ie, a tag, a developer, etc) to filter log messages by
@@ -38,7 +47,7 @@ public protocol UserInfoTagProtocol: UserInfoTaggingProtocol {
 
 public extension UserInfoTagProtocol {
     /// Dictionary representation compatible with the userInfo parameter of log messages
-    var dictionary: [String: Any] {
+    var userInfo: [String: Any] {
         return [Self.userInfoKey: name]
     }
 
@@ -134,18 +143,10 @@ public func |<Key: Hashable, Value: Any> (lhs: Dictionary<Key, Value>, rhs: Dict
 }
 
 /// Overloaded operator, converts UserInfoTaggingProtocol types to dictionaries and then merges them
-public func | <T: UserInfoConvertibleProtocol, U: UserInfoConvertibleProtocol> (lhs: T, rhs: U) -> Dictionary<String, Any> {
-    return lhs.dictionary | rhs.dictionary
-}
-
-/// Overloaded operator, converts UserInfoTaggingProtocol types to dictionaries and then merges them
-public func | <T: UserInfoConvertibleProtocol> (lhs: T, rhs: Dictionary<String, Any>) -> Dictionary<String, Any> {
-    return lhs.dictionary | rhs
-}
-
-/// Overloaded operator, converts UserInfoTaggingProtocol types to dictionaries and then merges them
-public func | <T: UserInfoConvertibleProtocol> (lhs: Dictionary<String, Any>, rhs: T) -> Dictionary<String, Any> {
-    return rhs.dictionary | lhs
+public func | <T: UserInfoConvertibleProtocol, U: UserInfoConvertibleProtocol> (lhs: T, rhs: U) -> UserInfoConvertibleProtocol {
+    return lhs.userInfo.merging(rhs.userInfo) { left, right in
+        return right
+    }
 }
 
 /// Extend UserInfoFilter to be able to use UserInfoTaggingProtocol objects

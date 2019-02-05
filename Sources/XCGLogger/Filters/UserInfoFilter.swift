@@ -102,12 +102,12 @@ open class UserInfoFilter: FilterProtocol {
         var matched: Bool = false
 
         if !applyFilterToInternalMessages,
-          let isInternal = logDetails.userInfo[XCGLogger.Constants.userInfoKeyInternal] as? Bool,
+          let isInternal = logDetails.userInfo.userInfo[XCGLogger.Constants.userInfoKeyInternal] as? Bool,
           isInternal {
             return inverse
         }
 
-        if let messageItemsObject = logDetails.userInfo[userInfoKey] {
+        if let messageItemsObject = logDetails.userInfo.userInfo[userInfoKey] {
             if let messageItemsSet: Set<String> = messageItemsObject as? Set<String> {
                 matched = itemsToMatch.intersection(messageItemsSet).count > 0
             }

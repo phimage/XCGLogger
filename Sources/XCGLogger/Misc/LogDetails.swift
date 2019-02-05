@@ -32,9 +32,9 @@ public struct LogDetails {
     public var lineNumber: Int
 
     /// Dictionary to store miscellaneous data about the log, can be used by formatters and filters etc. Please prefix any keys to help avoid collissions.
-    public var userInfo: [String: Any]
+    public var userInfo: UserInfoConvertibleProtocol
 
-    public init(level: XCGLogger.Level, date: Date, message: String, functionName: String, fileName: String, lineNumber: Int, userInfo: [String: Any] = [:]) {
+    public init(level: XCGLogger.Level, date: Date, message: String, functionName: String, fileName: String, lineNumber: Int, userInfo: UserInfoConvertibleProtocol = [:]) {
         self.level = level
         self.date = date
         self.message = message
